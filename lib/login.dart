@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutterwhatsapp/resources/AppColors.dart';
 import 'package:flutterwhatsapp/resources/AppStrings.dart';
 import 'package:flutterwhatsapp/resources/Images.dart';
 import 'package:flutterwhatsapp/signup.dart';
+
+import 'home.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -15,7 +20,30 @@ class _LoginState extends State<Login> {
 
   // handler login
   void doLogin() {
-    // ...
+    // implements controllers
+
+    FirebaseAuth auth = FirebaseAuth.instance;
+    auth.currentUser().then((value) => {
+      // exists user
+      debugPrint("have user"),
+      auth.signOut()
+    }).catchError((onError) {
+      authenticate();
+    });
+  }
+
+  void authenticate() {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    auth.signInWithEmailAndPassword(email: null, password: null).then((value) => {
+
+        debugPrint("user was login" + value.user.email),
+        this.authenticate()
+      });
+  }
+
+  void _navigateToHome() {
+    Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Home()));
   }
 
   // handler signup
