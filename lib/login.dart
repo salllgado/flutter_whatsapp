@@ -9,6 +9,7 @@ import 'package:flutterwhatsapp/resources/Images.dart';
 import 'package:flutterwhatsapp/signup.dart';
 
 import 'home.dart';
+import 'model/User.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -18,32 +19,49 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   @override
 
+  // define controllers
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    verifyUserLogIn();
+  }
+
   // handler login
   void doLogin() {
-    // implements controllers
+    if (_emailController.text.isNotEmpty &&
+        _passwordController.text.isNotEmpty &&
+        _emailController.text.contains("@")) {
 
+      User _user = User();
+      _user.saveUser("", _emailController.text, _passwordController.text);
+      authenticate(_user);
+    } else {
+      // ... show alert Contem dados em branco
+      debugPrint("Existem dados em branco ou incompletos");
+    }
+  }
+
+  Future verifyUserLogIn() async {
     FirebaseAuth auth = FirebaseAuth.instance;
-    auth.currentUser().then((value) => {
-      // exists user
-      debugPrint("have user"),
-      auth.signOut()
-    }).catchError((onError) {
-      authenticate();
+    FirebaseUser user = await auth.currentUser();
+    if (user != null) {
+        _navigateToHome();
+    }
+  }
+
+  void authenticate(User user) {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    auth.signInWithEmailAndPassword(email: _emailController.text, password: _passwordController.text).then((value) => {
+      debugPrint("user was login" + value.user.email),
+      this._navigateToHome()
     });
   }
 
-  void authenticate() {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    auth.signInWithEmailAndPassword(email: null, password: null).then((value) => {
-
-        debugPrint("user was login" + value.user.email),
-        this.authenticate()
-      });
-  }
-
   void _navigateToHome() {
-    Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Home()));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
   }
 
   // handler signup
@@ -69,6 +87,7 @@ class _LoginState extends State<Login> {
               Padding(
                 padding: EdgeInsets.all(8),
                 child: TextField(
+                  controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   style: TextStyle(fontSize: 20),
                   decoration: InputDecoration(
@@ -84,6 +103,7 @@ class _LoginState extends State<Login> {
               Padding(
                 padding: EdgeInsets.all(8),
                 child: TextField(
+                  controller: _passwordController,
                   keyboardType: TextInputType.emailAddress,
                   style: TextStyle(fontSize: 20),
                   decoration: InputDecoration(

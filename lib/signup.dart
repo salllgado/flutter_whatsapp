@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterwhatsapp/resources/AppColors.dart';
 import 'package:flutterwhatsapp/resources/AppStrings.dart';
@@ -42,23 +43,28 @@ class _SignUpState extends State<SignUp> {
   void _saveUserOnFirebase(User user) {
     FirebaseAuth auth = FirebaseAuth.instance;
     auth.fetchSignInMethodsForEmail(email: user.email).then((value) => {
-          if (value.isEmpty)
-            {
-              auth.createUserWithEmailAndPassword(
-                      email: user.email, password: user.passoword)
-                  .then((value) => {
-                        // we go to main view controller
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Home()))
-                      })
-                  .catchError((onError) {
-                debugPrint(onError.toString());
-                // show error message for user.
-              })
-            } else {
-              Navigator.pop(context)
-            }
-        });
+      if (value.isEmpty)
+        {
+          auth.createUserWithEmailAndPassword(
+                  email: user.email, password: user.passoword)
+              .then((value) => {
+                    this._createUserDataOnDatabase(value, user),
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => Home()))
+                  })
+              .catchError((onError) {
+            debugPrint(onError.toString());
+            // show error message for user.
+          })
+        } else {
+          Navigator.pop(context)
+        }
+    });
+  }
+
+  void _createUserDataOnDatabase(AuthResult authData, User user) {
+    Firestore db = Firestore.instance;
+    db.collection("usuarios").document(authData.user.uid).setData(user.toMap());
   }
 
   @override
