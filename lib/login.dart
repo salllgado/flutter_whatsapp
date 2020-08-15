@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutterwhatsapp/Worker/RouterWorker.dart';
 
 import 'package:flutterwhatsapp/resources/AppColors.dart';
 import 'package:flutterwhatsapp/resources/AppStrings.dart';
 import 'package:flutterwhatsapp/resources/Images.dart';
-import 'package:flutterwhatsapp/signup.dart';
 
-import 'home.dart';
 import 'model/User.dart';
 
 class Login extends StatefulWidget {
@@ -61,7 +60,7 @@ class _LoginState extends State<Login> {
   }
 
   void _navigateToHome() {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
+    Navigator.pushReplacementNamed(context, RouterWorker.homeRouteName);
   }
 
   // handler signup
@@ -104,7 +103,8 @@ class _LoginState extends State<Login> {
                 padding: EdgeInsets.all(8),
                 child: TextField(
                   controller: _passwordController,
-                  keyboardType: TextInputType.emailAddress,
+                  keyboardType: TextInputType.visiblePassword,
+                  obscureText: true,
                   style: TextStyle(fontSize: 20),
                   decoration: InputDecoration(
                     hintText: AppStrings.passwordHint,
@@ -142,8 +142,7 @@ class _LoginState extends State<Login> {
                     style: TextStyle(color: Colors.white),
                   ),
                   onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => SignUp()));
+                    Navigator.pushNamed(context, RouterWorker.signupRouteName);
                   },
                 ),
               ))

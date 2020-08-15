@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterwhatsapp/Worker/RouterWorker.dart';
+
 import 'package:flutterwhatsapp/resources/AppColors.dart';
 import 'package:flutterwhatsapp/resources/AppStrings.dart';
 import 'package:flutterwhatsapp/resources/Images.dart';
-
-import 'package:firebase_auth/firebase_auth.dart';
-
-import 'home.dart';
 import 'model/User.dart';
 
 class SignUp extends StatefulWidget {
@@ -49,8 +48,7 @@ class _SignUpState extends State<SignUp> {
                   email: user.email, password: user.passoword)
               .then((value) => {
                     this._createUserDataOnDatabase(value, user),
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => Home()))
+                    Navigator.pushNamedAndRemoveUntil(context, RouterWorker.homeRouteName, (route) => false),
                   })
               .catchError((onError) {
             debugPrint(onError.toString());
