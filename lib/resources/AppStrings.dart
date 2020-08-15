@@ -8,4 +8,6 @@ class AppStrings {
   static const emailHint = "e-mail";
   static const passwordHint = "senha";
   static const nameHint = "nome";
+  static const configurationMenuPopupMenuItem = "Configurações";
+  static const logoutMenuPopupMenuItem = "Deslogar";
 }
