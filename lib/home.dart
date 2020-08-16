@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutterwhatsapp/Worker/RouterWorker.dart';
+import 'package:flutterwhatsapp/worker/RouterWorker.dart';
 import 'package:flutterwhatsapp/homeTabs/ContactsTab.dart';
 import 'package:flutterwhatsapp/homeTabs/TalksTab.dart';
 import 'package:flutterwhatsapp/resources/AppStrings.dart';
@@ -30,6 +30,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   _actionPopUpMenu(String item) {
     switch (item) {
       case AppStrings.configurationMenuPopupMenuItem:
+        Navigator.pushNamed(context, RouterWorker.settingsRouteName);
         break;
       case AppStrings.logoutMenuPopupMenuItem:
         _doLogout();

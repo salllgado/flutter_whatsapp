@@ -1,4 +1,3 @@
-import 'package:flutterwhatsapp/signup.dart';
 
 class AppStrings {
   static const btnLogin = "Logar";
