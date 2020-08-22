@@ -9,7 +9,7 @@ class TalksTab extends StatefulWidget {
 
 class _TalksTabState extends State<TalksTab> {
   List<Chat> chatList = [
-    Chat("Laura", "Olá",
+    Chat("Lais", "Olá",
         "https://firebasestorage.googleapis.com/v0/b/whatsapp-a6e5e.appspot.com/o/Profile%2Fperfil1.jpg?alt=media&token=7fa6b120-6680-43a0-83ff-b6deafcce76b"),
     Chat("Leila", "Venha aqui meu filho",
         "https://firebasestorage.googleapis.com/v0/b/whatsapp-a6e5e.appspot.com/o/Profile%2Fperfil1.jpg?alt=media&token=7fa6b120-6680-43a0-83ff-b6deafcce76b"),

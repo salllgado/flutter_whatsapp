@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+
 class User {
   String _name;
   String _email;
@@ -9,7 +11,7 @@ class User {
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
-      "nome": this.name,
+      "name": this.name,
       "email": this.email
     };
 
@@ -20,5 +22,11 @@ class User {
     this._name = name;
     this._email = email;
     this._password = password;
+  }
+
+  static Future<FirebaseUser> getFireabseUser() async {
+    FirebaseAuth authInstance = FirebaseAuth.instance;
+    FirebaseUser user = await authInstance.currentUser();
+    return user;
   }
 }

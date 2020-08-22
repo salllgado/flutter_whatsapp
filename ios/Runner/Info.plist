@@ -41,5 +41,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>Precisamos da permissão para mudar sua foto de perfil</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Precisamos da permissão para mudar sua foto de perfil</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Precisamos da permissão para mudar sua foto de perfil</string>
 </dict>
 </plist>

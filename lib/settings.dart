@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutterwhatsapp/model/User.dart';
 
@@ -19,9 +20,11 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-  // Variables
   TextEditingController _nameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+
   Image _userImageFile;
+
   String _imageUrl;
   bool _loading = false;
 
@@ -78,9 +81,10 @@ class _SettingsState extends State<Settings> {
     FirebaseStorage storage = FirebaseStorage.instance;
     StorageReference mainFolder = storage.ref();
     StorageReference file = mainFolder.child("Profile").child("$_userUID.jpg");
-    // file.putFile(fileImage);
+    file.putFile(fileImage);
 
     StorageUploadTask task = file.putFile(fileImage);
+    String fileUrl = await file.getDownloadURL();
 
     task.events.listen((storageTaskEvent) {
       switch (storageTaskEvent.type) {
@@ -98,8 +102,11 @@ class _SettingsState extends State<Settings> {
     });
 
     task.onComplete.then((snapshot) => {
-      _getImageURLFromRemote()
-    });
+          _saveDataOnFirestore(fileUrl),
+          setState(() {
+            this._imageUrl = fileUrl;
+          })
+        });
   }
 
   Future _getImageURLFromRemote() async {
@@ -107,18 +114,39 @@ class _SettingsState extends State<Settings> {
     FirebaseUser user = await authInstance.currentUser();
     String _userUID = user.uid;
 
-    FirebaseStorage storage = FirebaseStorage.instance;
-    StorageReference mainFolder = storage.ref();
+    Firestore db = Firestore.instance;
+    DocumentSnapshot snapshot =
+        await db.collection("users").document(_userUID).get();
 
-    /* 
-    caso não houver imagem o app vai quebrar, no exemplo salvamos a url no firebase para recuperar ela por la
-    e verificar se ela é nula ou não
-    */
-    String _imageUrl = await mainFolder.child("Profile").child("$_userUID.jpg").getDownloadURL();
+    Map<String, dynamic> userData = snapshot.data;
+    _nameController.text = userData["name"];
+    _emailController.text = userData["email"];
 
     setState(() {
-      this._imageUrl = _imageUrl;
+      this._imageUrl = userData["imageUrl"];
     });
+  }
+
+  Future _saveDataOnFirestore(String url) async {
+    FirebaseAuth authInstance = FirebaseAuth.instance;
+    FirebaseUser user = await authInstance.currentUser();
+    String _userUID = user.uid;
+
+    Map<String, dynamic> updateData = {"imageUrl": url};
+
+    Firestore db = Firestore.instance;
+    db.collection("users").document(_userUID).updateData(updateData);
+  }
+
+  Future _saveUserDataOnFirestore(String name) async {
+    FirebaseAuth authInstance = FirebaseAuth.instance;
+    FirebaseUser user = await authInstance.currentUser();
+    String _userUID = user.uid;
+
+    Map<String, dynamic> updateData = {"name": name};
+
+    Firestore db = Firestore.instance;
+    db.collection("users").document(_userUID).updateData(updateData);
   }
 
   Widget handlerLoadingIfNeeded() {
@@ -158,6 +186,30 @@ class _SettingsState extends State<Settings> {
         ));
   }
 
+  Widget getImageView() {
+    return CircleAvatar(
+      radius: 80,
+      backgroundColor: AppColors.primaryCollor,
+      child: ClipOval(
+        child: Image.network(
+          _imageUrl,
+          width: 150,
+          height: 150,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+
+  Widget getLoadingIndicator() {
+    return Padding(
+      padding: EdgeInsets.all(32),
+      child: Column(
+        children: [CircularProgressIndicator()],
+      )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -172,7 +224,10 @@ class _SettingsState extends State<Settings> {
                   fontWeight: FontWeight.bold,
                   color: Colors.white),
             ),
-            onPressed: () {},
+            onPressed: () {
+              _saveUserDataOnFirestore(
+                  _nameController.text);
+            },
           ),
         ],
       ),
@@ -184,12 +239,9 @@ class _SettingsState extends State<Settings> {
             children: [
               Padding(
                 padding: EdgeInsets.only(top: 32),
-                child: CircleAvatar(
-                  radius: 80,
-                  backgroundColor: AppColors.primaryCollor,
-                  child: handlerLoadingIfNeeded(),
-                  backgroundImage: _imageUrl != null ? NetworkImage(_imageUrl) : null,
-                ),
+                child: _imageUrl != null
+                    ? getImageView()
+                    : Container(height: 150, width: 150),
               ),
               Padding(
                 padding: EdgeInsets.only(top: 16),
@@ -221,7 +273,24 @@ class _SettingsState extends State<Settings> {
                         borderRadius: BorderRadius.circular(32)),
                   ),
                 ),
-              )
+              ),
+              Padding(
+                padding: EdgeInsets.all(8),
+                child: TextField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  style: TextStyle(fontSize: 20),
+                  decoration: InputDecoration(
+                    hintText: AppStrings.emailHint,
+                    contentPadding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                    filled: true,
+                    fillColor: AppColors.textFieldBackground,
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(32)),
+                  ),
+                ),
+              ),
+            _loading ? getLoadingIndicator() : Container(),
             ],
           ),
         ),

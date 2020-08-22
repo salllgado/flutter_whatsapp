@@ -1,6 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterwhatsapp/model/Contact.dart';
+import 'package:flutterwhatsapp/model/User.dart';
 import 'package:flutterwhatsapp/resources/AppColors.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ContactsTab extends StatefulWidget {
   @override
@@ -8,30 +12,76 @@ class ContactsTab extends StatefulWidget {
 }
 
 class _ContactTabState extends State<ContactsTab> {
+  List<Contact> contactList;
 
-  List<Contact> contactList = [
-    Contact("Juliana", "https://firebasestorage.googleapis.com/v0/b/whatsapp-a6e5e.appspot.com/o/Profile%2Fperfil1.jpg?alt=media&token=7fa6b120-6680-43a0-83ff-b6deafcce76b")
-  ];
+  Future<List<Contact>> _getContactList() async {
+    Firestore instance = Firestore.instance;
+    QuerySnapshot snapshot = await instance.collection("users").getDocuments();
+
+    List<Contact> contactList = List();
+
+    for (DocumentSnapshot item in snapshot.documents) {
+      var data = item.data;
+
+      FirebaseUser user = await User.getFireabseUser();
+
+      if (data["email"] != user.email) {
+        Contact contact = Contact(data["name"], data["email"], data["imageUrl"]);
+        contactList.add(contact);
+      }
+    }
+
+    return contactList;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView.builder(
-          itemCount: contactList.length,
-          itemBuilder: (context, index) {
-            return ListTile(
-              contentPadding: EdgeInsets.all(8),
-              leading: CircleAvatar(
-                maxRadius: 30,
-                backgroundColor: AppColors.primaryCollor,
-                backgroundImage: NetworkImage(contactList[index].photoUrl),
-              ),
-              title: Text(
-                contactList[index].name,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              )
-            );
-          }),
-    );
+    return FutureBuilder<List<Contact>>(
+        future: _getContactList(),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return Center(
+                child: Padding(
+                    padding: EdgeInsets.all(32),
+                    child: Column(
+                      children: [CircularProgressIndicator()],
+                    )),
+              );
+              break;
+            case ConnectionState.done:
+              return ListView.builder(
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (context, index) {
+                    List<Contact> contactList = snapshot.data;
+                    Contact contact = contactList[index];
+
+                    if (snapshot.data.length == 0) {
+                      return Center(
+                        child: Padding(
+                            padding: EdgeInsets.all(32),
+                            child: Column(
+                              children: [Text("Não existe contatos disponiveis")],
+                            )),
+                      );
+                    }
+                    return ListTile(
+                        contentPadding: EdgeInsets.all(8),
+                        leading: CircleAvatar(
+                          maxRadius: 30,
+                          backgroundColor: AppColors.primaryCollor,
+                          backgroundImage: contact.photoUrl != null
+                              ? NetworkImage(contactList[index].photoUrl)
+                              : null,
+                        ),
+                        title: Text(
+                          contact.name,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ));
+                  });
+              break;
+          }
+        });
   }
 }

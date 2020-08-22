@@ -62,7 +62,7 @@ class _SignUpState extends State<SignUp> {
 
   void _createUserDataOnDatabase(AuthResult authData, User user) {
     Firestore db = Firestore.instance;
-    db.collection("usuarios").document(authData.user.uid).setData(user.toMap());
+    db.collection("users").document(authData.user.uid).setData(user.toMap());
   }
 
   @override
