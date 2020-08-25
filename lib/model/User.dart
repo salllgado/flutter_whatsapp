@@ -8,6 +8,10 @@ class User {
   String get name => _name;
   String get email => _email;
   String get passoword => _password;
+  
+  String get nameFirebaseKey => "name";
+  String get emailFirebaseKey => "email";
+  String get passowordFirebaseKey => "passoword";
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {

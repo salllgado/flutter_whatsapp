@@ -5,6 +5,8 @@ import 'package:flutterwhatsapp/model/User.dart';
 import 'package:flutterwhatsapp/resources/AppColors.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutterwhatsapp/resources/AppStrings.dart';
+import 'package:flutterwhatsapp/resources/FirebaseKeys.dart';
 import 'package:flutterwhatsapp/worker/RouterWorker.dart';
 
 class ContactsTab extends StatefulWidget {
@@ -17,7 +19,7 @@ class _ContactTabState extends State<ContactsTab> {
 
   Future<List<Contact>> _getContactList() async {
     Firestore instance = Firestore.instance;
-    QuerySnapshot snapshot = await instance.collection("users").getDocuments();
+    QuerySnapshot snapshot = await instance.collection(FirebaseKeys.usersCollection).getDocuments();
 
     List<Contact> contactList = List();
 
@@ -26,9 +28,9 @@ class _ContactTabState extends State<ContactsTab> {
 
       FirebaseUser user = await User.getFireabseUser();
 
-      if (data["email"] != user.email) {
+      if (data[Contact.emailFirebaseKey] != user.email) {
         Contact contact =
-            Contact(data["name"], data["email"], data["imageUrl"]);
+            Contact(data[Contact.nameFirebaseKey], data[Contact.emailFirebaseKey], data[Contact.photoUrlFirebaseKey]);
         contactList.add(contact);
       }
     }
@@ -64,7 +66,7 @@ class _ContactTabState extends State<ContactsTab> {
                             padding: EdgeInsets.all(32),
                             child: Column(
                               children: [
-                                Text("Não existe contatos disponiveis")
+                                Text(AppStrings.emptyViewContactList)
                               ],
                             )),
                       );

@@ -160,17 +160,17 @@ class _SettingsState extends State<Settings> {
   Widget showAlertView() {
     return CupertinoActionSheet(
         title:
-            const Text('Selecione uma opção para fazer o upload de uma imagem'),
+            const Text(AppStrings.settingsAlertViewTitle),
         actions: <Widget>[
           CupertinoActionSheetAction(
-            child: const Text("Camera"),
+            child: const Text(AppStrings.settingsAlertViewCameraButton),
             onPressed: () {
               getImage(SourceType.camera);
               Navigator.pop(context, "Camera action");
             },
           ),
           CupertinoActionSheetAction(
-            child: const Text("Galeria"),
+            child: const Text(AppStrings.settingsAlertViewGaleryButton),
             onPressed: () {
               getImage(SourceType.gallery);
               Navigator.pop(context, "Galeria action");
@@ -178,7 +178,7 @@ class _SettingsState extends State<Settings> {
           ),
         ],
         cancelButton: CupertinoActionSheetAction(
-          child: const Text('Cancelar'),
+          child: const Text(AppStrings.settingsAlertViewCancelButton),
           isDefaultAction: true,
           onPressed: () {
             Navigator.pop(context, 'Cancel');
@@ -214,11 +214,11 @@ class _SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Configurações"),
+        title: Text(AppStrings.configurationMenuPopupMenuItem),
         actions: [
           FlatButton(
             child: Text(
-              "Salvar",
+              AppStrings.saveAppBarButtonItem,
               style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -247,7 +247,7 @@ class _SettingsState extends State<Settings> {
                 padding: EdgeInsets.only(top: 16),
                 child: FlatButton(
                   child: Text(
-                    "Trocar imagem",
+                    AppStrings.changeImageButton,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   onPressed: () {

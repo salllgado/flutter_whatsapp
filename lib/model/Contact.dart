@@ -13,4 +13,9 @@ class Contact {
 
   String get name => _name;
   String get photoUrl => _photoUrl;
+
+  static String get nameFirebaseKey => "name";
+  static String get emailFirebaseKey => "email";
+  static String get photoUrlFirebaseKey => "imageUrl";
+
 }

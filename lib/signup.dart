@@ -5,6 +5,7 @@ import 'package:flutterwhatsapp/Worker/RouterWorker.dart';
 
 import 'package:flutterwhatsapp/resources/AppColors.dart';
 import 'package:flutterwhatsapp/resources/AppStrings.dart';
+import 'package:flutterwhatsapp/resources/FirebaseKeys.dart';
 import 'package:flutterwhatsapp/resources/Images.dart';
 import 'model/User.dart';
 
@@ -62,7 +63,7 @@ class _SignUpState extends State<SignUp> {
 
   void _createUserDataOnDatabase(AuthResult authData, User user) {
     Firestore db = Firestore.instance;
-    db.collection("users").document(authData.user.uid).setData(user.toMap());
+    db.collection(FirebaseKeys.usersCollection).document(authData.user.uid).setData(user.toMap());
   }
 
   @override

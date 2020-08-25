@@ -48,14 +48,17 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Home"),
+        title: Text(AppStrings.homeScreenTitle),
         bottom: TabBar(
             controller: _tabController,
             indicatorColor: Colors.white,
             indicatorWeight: 4,
             labelPadding: EdgeInsets.all(16),
             labelStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            tabs: <Widget>[Text("Conversas"), Text("Contatos")]),
+            tabs: <Widget>[
+                Text(AppStrings.talksTabTitle),
+                Text(AppStrings.contactsTabTitle)
+              ]),
         actions: [
           PopupMenuButton<String>(
             onSelected: _actionPopUpMenu,
