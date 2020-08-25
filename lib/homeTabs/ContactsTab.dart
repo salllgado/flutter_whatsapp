@@ -5,6 +5,7 @@ import 'package:flutterwhatsapp/model/User.dart';
 import 'package:flutterwhatsapp/resources/AppColors.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutterwhatsapp/worker/RouterWorker.dart';
 
 class ContactsTab extends StatefulWidget {
   @override
@@ -26,7 +27,8 @@ class _ContactTabState extends State<ContactsTab> {
       FirebaseUser user = await User.getFireabseUser();
 
       if (data["email"] != user.email) {
-        Contact contact = Contact(data["name"], data["email"], data["imageUrl"]);
+        Contact contact =
+            Contact(data["name"], data["email"], data["imageUrl"]);
         contactList.add(contact);
       }
     }
@@ -61,24 +63,33 @@ class _ContactTabState extends State<ContactsTab> {
                         child: Padding(
                             padding: EdgeInsets.all(32),
                             child: Column(
-                              children: [Text("Não existe contatos disponiveis")],
+                              children: [
+                                Text("Não existe contatos disponiveis")
+                              ],
                             )),
                       );
                     }
                     return ListTile(
-                        contentPadding: EdgeInsets.all(8),
-                        leading: CircleAvatar(
-                          maxRadius: 30,
-                          backgroundColor: AppColors.primaryCollor,
-                          backgroundImage: contact.photoUrl != null
-                              ? NetworkImage(contactList[index].photoUrl)
-                              : null,
-                        ),
-                        title: Text(
-                          contact.name,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
-                        ));
+                      contentPadding: EdgeInsets.all(8),
+                      leading: CircleAvatar(
+                        maxRadius: 30,
+                        backgroundColor: AppColors.primaryCollor,
+                        backgroundImage: contact.photoUrl != null
+                            ? NetworkImage(contactList[index].photoUrl)
+                            : null,
+                      ),
+                      title: Text(
+                        contact.name,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      onTap: () {
+                        Navigator.pushNamed(
+                            context,
+                            RouterWorker.messagesRouteName,
+                            arguments: contact);
+                      },
+                    );
                   });
               break;
           }

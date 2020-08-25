@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutterwhatsapp/worker/RouterWorker.dart';
-import 'package:flutterwhatsapp/homeTabs/ContactsTab.dart';
-import 'package:flutterwhatsapp/homeTabs/TalksTab.dart';
+import 'package:flutterwhatsapp/homeTabs/contactsTab.dart';
+import 'package:flutterwhatsapp/homeTabs/talksTab.dart';
 import 'package:flutterwhatsapp/resources/AppStrings.dart';
 
 class Home extends StatefulWidget {

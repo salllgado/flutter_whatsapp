@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import 'package:flutterwhatsapp/login.dart';
+import 'package:flutterwhatsapp/messages.dart';
 import 'package:flutterwhatsapp/settings.dart';
 import '../home.dart';
 import '../signup.dart';
@@ -9,6 +10,7 @@ class RouterWorker {
   static const loginRouteName = "/login";
   static const signupRouteName = "/signup";
   static const homeRouteName = "/home";
+  static const messagesRouteName = "/messages";
   static const settingsRouteName = "/settings";
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -28,6 +30,8 @@ class RouterWorker {
       case settingsRouteName:
         return MaterialPageRoute(builder: (context) => Settings());
         break;
+      case messagesRouteName:
+        return MaterialPageRoute(builder: (context) => Messages(settings.arguments));
       default:
         return RouterWorker.navigateToLogin();
         break;
