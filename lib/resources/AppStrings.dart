@@ -21,5 +21,6 @@ class AppStrings {
   static const settingsAlertViewCameraButton = "Camera";
   static const settingsAlertViewGaleryButton = "Galeria";
   static const settingsAlertViewCancelButton = "Cancelar";
+  
   // messages view
 }
