@@ -6,7 +6,6 @@ import 'package:flutterwhatsapp/resources/Images.dart';
 class Messages extends StatefulWidget {
   // class params to be injected
   Contact contact;
-
   Messages(this.contact);
 
   @override
@@ -15,7 +14,13 @@ class Messages extends StatefulWidget {
 
 class _MessagesState extends State<Messages> {
   TextEditingController textEntryController = TextEditingController();
-  static List<String> messages = ["Bom dia !!!", "Bom dia ;)", "Como passou a noite, Como passou a noite, Como passou a noite", "Bem, e tu, Bem, e tu, Bem, e tu", "Sonhei com você kkkk"];
+  static List<String> messages = [
+    "Bom dia !!!",
+    "Bom dia ;)",
+    "Como passou a noite, Como passou a noite, Como passou a noite",
+    "Bem, e tu, Bem, e tu, Bem, e tu",
+    "Sonhei com você kkkk"
+  ];
 
   void _sendImage() {}
 
@@ -28,7 +33,7 @@ class _MessagesState extends State<Messages> {
           itemBuilder: (context, index) {
             Alignment boxAlignment = Alignment.centerRight;
             Color boxColor = Color(0xffd2ffa5);
-            
+
             double leftPadding = 8;
             double rightPadding = 8;
             double maxPadding = 60;
@@ -47,7 +52,8 @@ class _MessagesState extends State<Messages> {
             return Align(
                 alignment: boxAlignment,
                 child: Padding(
-                    padding: EdgeInsets.fromLTRB(leftPadding, 8, rightPadding, 8),
+                    padding:
+                        EdgeInsets.fromLTRB(leftPadding, 8, rightPadding, 8),
                     child: Container(
                       padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(
@@ -64,7 +70,26 @@ class _MessagesState extends State<Messages> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.contact.name),
+          title: Container(
+            child: Row(
+              children: [
+                Padding(
+                  child: CircleAvatar(
+                    maxRadius: 20,
+                    backgroundColor: AppColors.primaryCollor,
+                    backgroundImage: widget.contact.photoUrl != null
+                        ? NetworkImage(widget.contact.photoUrl)
+                        : null,
+                  ),
+                  padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
+                ),
+                Padding(
+                  child: Text(widget.contact.name),
+                  padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
+                ),
+              ],
+            ),
+          ),
         ),
         body: Container(
           width: MediaQuery.of(context).size.width,

@@ -24,7 +24,14 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
-    verifyUserLogIn();
+    loadData();
+  }
+
+  void loadData() async {
+    FirebaseUser user = await User.getFireabseUser();
+    if (user != null) {
+        _navigateToHome();
+    }
   }
 
   // handler login
@@ -42,13 +49,14 @@ class _LoginState extends State<Login> {
     }
   }
 
-  Future verifyUserLogIn() async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    FirebaseUser user = await auth.currentUser();
-    if (user != null) {
-        _navigateToHome();
-    }
-  }
+  // Future<FirebaseUser> verifyUserLogIn() async {
+  //   FirebaseAuth auth = FirebaseAuth.instance;
+  //   FirebaseUser user = await auth.currentUser();
+  //   return user;
+  //   if (user != null) {
+  //       _navigateToHome();
+  //   }
+  // }
 
   void authenticate(User user) {
     FirebaseAuth auth = FirebaseAuth.instance;

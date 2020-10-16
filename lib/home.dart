@@ -6,6 +6,8 @@ import 'package:flutterwhatsapp/homeTabs/contactsTab.dart';
 import 'package:flutterwhatsapp/homeTabs/talksTab.dart';
 import 'package:flutterwhatsapp/resources/AppStrings.dart';
 
+import 'model/User.dart';
+
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
@@ -27,6 +29,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     super.initState();
   }
 
+  // Verifica se há usuário logado
+  void _verifyUser() async {
+    FirebaseUser user = await User.getFireabseUser();
+    if (user == null) {
+        Navigator.pushReplacementNamed(context, RouterWorker.loginRouteName);
+    }
+  }
+
   _actionPopUpMenu(String item) {
     switch (item) {
       case AppStrings.configurationMenuPopupMenuItem:
@@ -40,7 +50,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   _doLogout() async {
     await auth.signOut();
-
     Navigator.pushReplacementNamed(context, RouterWorker.loginRouteName);
   }
 
