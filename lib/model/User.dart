@@ -1,14 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
 class User {
+  String _userId;
   String _name;
   String _email;
   String _password;
 
+  String get userId => _userId;
   String get name => _name;
   String get email => _email;
   String get passoword => _password;
   
+  String get userIdFirebaseKey => "userId";
   String get nameFirebaseKey => "name";
   String get emailFirebaseKey => "email";
   String get passowordFirebaseKey => "passoword";
@@ -26,11 +29,5 @@ class User {
     this._name = name;
     this._email = email;
     this._password = password;
-  }
-
-  static Future<FirebaseUser> getFireabseUser() async {
-    FirebaseAuth authInstance = FirebaseAuth.instance;
-    FirebaseUser user = await authInstance.currentUser();
-    return user;
   }
 }

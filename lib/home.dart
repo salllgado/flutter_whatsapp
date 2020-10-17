@@ -6,6 +6,7 @@ import 'package:flutterwhatsapp/homeTabs/contactsTab.dart';
 import 'package:flutterwhatsapp/homeTabs/talksTab.dart';
 import 'package:flutterwhatsapp/resources/AppStrings.dart';
 
+import 'model/FirebaseUserData.dart';
 import 'model/User.dart';
 
 class Home extends StatefulWidget {
@@ -31,7 +32,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   // Verifica se há usuário logado
   void _verifyUser() async {
-    FirebaseUser user = await User.getFireabseUser();
+    FirebaseUser user = await FirebaseUserData.getFireabseUser();
     if (user == null) {
         Navigator.pushReplacementNamed(context, RouterWorker.loginRouteName);
     }

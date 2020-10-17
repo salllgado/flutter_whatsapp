@@ -1,7 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterwhatsapp/model/Contact.dart';
+import 'package:flutterwhatsapp/model/Menssage.dart';
 import 'package:flutterwhatsapp/resources/AppColors.dart';
 import 'package:flutterwhatsapp/resources/Images.dart';
+
+import 'model/FirebaseUserData.dart';
 
 class Messages extends StatefulWidget {
   // class params to be injected
@@ -14,6 +18,9 @@ class Messages extends StatefulWidget {
 
 class _MessagesState extends State<Messages> {
   TextEditingController textEntryController = TextEditingController();
+  String userUID;
+  String destinationUserUID;
+
   static List<String> messages = [
     "Bom dia !!!",
     "Bom dia ;)",
@@ -22,9 +29,33 @@ class _MessagesState extends State<Messages> {
     "Sonhei com você kkkk"
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  void _loadUserData() async {
+    userUID = await FirebaseUserData.getFireabseUserId();
+    destinationUserUID = widget.contact.userId;
+  }
+
   void _sendImage() {}
 
-  void _sendMessage() {}
+  void _sendMessage() {
+    String textMenssage = textEntryController.text;
+    if (textMenssage != null) {
+      Menssage menssage = Menssage(userUID, textMenssage, "", "text");
+      _saveMenssage(userUID, destinationUserUID, menssage);
+    }
+  }
+
+  void _saveMenssage(String userId, String destinationUserId, Menssage menssage) async {
+    Firestore db = Firestore.instance;
+    await db.collection("menssages").document(userId).collection(destinationUserId).add(menssage.toMap());
+
+    textEntryController.clear();
+  }
 
   // - layout
   var listView = Expanded(

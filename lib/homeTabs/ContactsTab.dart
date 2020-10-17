@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterwhatsapp/model/Contact.dart';
+import 'package:flutterwhatsapp/model/FirebaseUserData.dart';
 import 'package:flutterwhatsapp/model/User.dart';
 import 'package:flutterwhatsapp/resources/AppColors.dart';
 
@@ -26,11 +27,11 @@ class _ContactTabState extends State<ContactsTab> {
     for (DocumentSnapshot item in snapshot.documents) {
       var data = item.data;
 
-      FirebaseUser user = await User.getFireabseUser();
+      FirebaseUser user = await FirebaseUserData.getFireabseUser();
 
       if (data[Contact.emailFirebaseKey] != user.email) {
         Contact contact =
-            Contact(data[Contact.nameFirebaseKey], data[Contact.emailFirebaseKey], data[Contact.photoUrlFirebaseKey]);
+            Contact(item.documentID, data[Contact.nameFirebaseKey], data[Contact.emailFirebaseKey], data[Contact.photoUrlFirebaseKey]);
         contactList.add(contact);
       }
     }

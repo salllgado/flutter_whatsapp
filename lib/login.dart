@@ -7,6 +7,7 @@ import 'package:flutterwhatsapp/resources/AppColors.dart';
 import 'package:flutterwhatsapp/resources/AppStrings.dart';
 import 'package:flutterwhatsapp/resources/Images.dart';
 
+import 'model/FirebaseUserData.dart';
 import 'model/User.dart';
 
 class Login extends StatefulWidget {
@@ -28,7 +29,7 @@ class _LoginState extends State<Login> {
   }
 
   void loadData() async {
-    FirebaseUser user = await User.getFireabseUser();
+    FirebaseUser user = await FirebaseUserData.getFireabseUser();
     if (user != null) {
         _navigateToHome();
     }

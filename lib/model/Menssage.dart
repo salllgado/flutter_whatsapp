@@ -27,5 +27,6 @@ class Menssage {
       "urlImagem": this._urlImage,
       "tipoMensagem": this._menssageType,
     };
+    return map;
   }
 }
