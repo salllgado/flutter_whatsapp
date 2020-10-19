@@ -18,16 +18,9 @@ class Messages extends StatefulWidget {
 
 class _MessagesState extends State<Messages> {
   TextEditingController textEntryController = TextEditingController();
-  String userUID;
-  String destinationUserUID;
-
-  static List<String> messages = [
-    "Bom dia !!!",
-    "Bom dia ;)",
-    "Como passou a noite, Como passou a noite, Como passou a noite",
-    "Bem, e tu, Bem, e tu, Bem, e tu",
-    "Sonhei com você kkkk"
-  ];
+  static Firestore db = Firestore.instance;
+  static String userUID;
+  static String destinationUserUID;
 
   @override
   void initState() {
@@ -47,55 +40,95 @@ class _MessagesState extends State<Messages> {
     if (textMenssage != null) {
       Menssage menssage = Menssage(userUID, textMenssage, "", "text");
       _saveMenssage(userUID, destinationUserUID, menssage);
+      _saveMenssage(destinationUserUID, userUID, menssage);
     }
   }
 
-  void _saveMenssage(String userId, String destinationUserId, Menssage menssage) async {
-    Firestore db = Firestore.instance;
-    await db.collection("menssages").document(userId).collection(destinationUserId).add(menssage.toMap());
+  void _saveMenssage(
+      String userId, String destinationUserId, Menssage menssage) async {
+    await db
+        .collection("menssages")
+        .document(userId)
+        .collection(destinationUserId)
+        .add(menssage.toMap());
 
     textEntryController.clear();
   }
 
-  // - layout
-  var listView = Expanded(
-      child: ListView.builder(
-          itemCount: messages.length,
-          itemBuilder: (context, index) {
-            Alignment boxAlignment = Alignment.centerRight;
-            Color boxColor = Color(0xffd2ffa5);
+  var streamView = StreamBuilder(
+      stream: db
+          .collection("menssages")
+          .document(userUID)
+          .collection(destinationUserUID)
+          .snapshots(),
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return Center(
+              child: Column(
+                children: [
+                  Text("Carregando contatos"),
+                  CircularProgressIndicator()
+                ],
+              ),
+            );
+          case ConnectionState.active:
+          case ConnectionState.done:
+            QuerySnapshot querySnapshot = snapshot.data;
 
-            double leftPadding = 8;
-            double rightPadding = 8;
-            double maxPadding = 60;
-
-            if (index % 2 == 0) {
-              // sou eu
-              boxColor = Colors.white;
-              boxAlignment = Alignment.centerLeft;
-              rightPadding = maxPadding;
-              leftPadding = 8;
+            if (snapshot.hasError) {
+              Center(
+                child: Column(
+                  children: [Text("Carregando contatos")],
+                ),
+              );
             } else {
-              rightPadding = 8;
-              leftPadding = maxPadding;
-            }
+              return Expanded(
+                  child: ListView.builder(
+                      itemCount: querySnapshot.documents.length,
+                      itemBuilder: (context, index) {
 
-            return Align(
-                alignment: boxAlignment,
-                child: Padding(
-                    padding:
-                        EdgeInsets.fromLTRB(leftPadding, 8, rightPadding, 8),
-                    child: Container(
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                          color: boxColor,
-                          borderRadius: BorderRadius.circular(8)),
-                      child: Text(
-                        messages[index],
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    )));
-          }));
+                        // criar objeto de mensagens
+                        List<DocumentSnapshot> mensagens = querySnapshot.documents.toList();
+                        DocumentSnapshot item = mensagens[index];
+
+                        Alignment boxAlignment = Alignment.centerRight;
+                        Color boxColor = Color(0xffd2ffa5);
+
+                        double leftPadding = 8;
+                        double rightPadding = 8;
+                        double maxPadding = 60;
+
+                        if (userUID != item["idUsuario"]) {
+                          // sou eu
+                          boxColor = Colors.white;
+                          boxAlignment = Alignment.centerLeft;
+                          rightPadding = maxPadding;
+                          leftPadding = 8;
+                        } else {
+                          rightPadding = 8;
+                          leftPadding = maxPadding;
+                        }
+
+                        return Align(
+                            alignment: boxAlignment,
+                            child: Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                    leftPadding, 8, rightPadding, 8),
+                                child: Container(
+                                  padding: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                      color: boxColor,
+                                      borderRadius: BorderRadius.circular(8)),
+                                  child: Text(
+                                    item["mensagem"],
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                )));
+                      }));
+            }
+        }
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +165,7 @@ class _MessagesState extends State<Messages> {
             child: Container(
               padding: EdgeInsets.all(8),
               child: Column(children: [
-                listView,
+                streamView,
                 Container(
                   padding: EdgeInsets.all(8),
                   child: Row(children: [
